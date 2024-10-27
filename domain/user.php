@@ -9,6 +9,11 @@ function createToken($username)
   return password_hash($username . ' - ' . $SECRET_KEY, PASSWORD_BCRYPT);
 }
 
+function getCurrentUser()
+{
+  return isset($_COOKIE['user']) ? json_decode($_COOKIE['user']) : null;
+}
+
 function register($username, $password)
 {
   global $connection;
@@ -33,7 +38,6 @@ function register($username, $password)
     setcookie('user', json_encode($user), time() + 60 * 60 * 1); // expire on 1 hour
 
     $statement->close();
-    $connection->close();
 
     return $user;
   } catch (Exception $e) {
@@ -58,7 +62,6 @@ function login($username, $password)
     $user = $result->fetch_assoc();
 
     $statement->close();
-    $connection->close();
 
     if (is_null($user)) {
       return null;

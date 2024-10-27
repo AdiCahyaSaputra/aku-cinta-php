@@ -15,34 +15,45 @@ set_error_handler(function ($errno, $errstr) {
 require_once __DIR__ . '\database\connection.php';
 require_once __DIR__ . '\middleware\index.php';
 require_once __DIR__ . '\constant\env.php';
+require_once __DIR__ . '\routes.php';
 
-switch ($_SERVER['REQUEST_URI']) {
-  case '/login':
+route('/login', function () {
+  middleware('guest');
 
-    middleware('guest');
+  require_once __DIR__ . '\pages\login.php';
+});
 
-    require_once __DIR__ . '\pages\login.php';
-    break;
+route('/register', function () {
+  middleware('guest');
 
-  case '/register':
+  require_once __DIR__ . '\pages\register.php';
+});
 
-    middleware('guest');
+route('/todo', function () {
+  middleware('auth');
 
-    require_once __DIR__ . '\pages\register.php';
-    break;
+  require_once __DIR__ . '\pages\todo.php';
+});
 
-  case '/todo':
+route('/todo/{id}', function($params) {
+  middleware('auth');
+  
+  [$id] = $params;
 
-    middleware('auth');
+  require_once __DIR__ . '\pages\single-todo.php';
+});
 
-    require_once __DIR__ . '\pages\todo.php';
-    break;
 
-  case '/':
-    header('Location: ' . $BASE_URL . '/todo');
-    break;
+route('/todo/{todoId}/user/{userId}', function($params) { // Example aja buat pamer klo route yang di bikin from scratch ini berfungsi 😎
+  [$todoId, $userId] = $params;
 
-  default:
-    require_once __DIR__ . '\pages\404.php';
-    break;
-}
+  echo $todoId . ' ' . $userId;
+});
+
+route('/', function() {
+  global $BASE_URL;
+
+  header('Location: ' . $BASE_URL . '/todo');
+});
+
+require_once __DIR__ . '\pages\404.php';
