@@ -1,5 +1,5 @@
 1. Download XAMPP
-2. Bikin database `test_db`
+2. Import database `test_db` di phpmyadmin kalian
 3. Jalanin 
 
 ```bash
